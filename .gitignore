@@ -2,3 +2,40 @@
 ## EPiServer Files
 ######################
 *License.config
+
+######################
+## .NET Build Artifacts
+######################
+bin/
+obj/
+*.user
+*.suo
+*.cache
+.vs/
+_ReSharper*/
+[Tt]est[Rr]esult*/
+[Bb]uild[Ll]og.*
+*.vspscc
+*.vssscc
+.builds
+*.pidb
+*.svclog
+*.scc
+
+######################
+## NuGet
+######################
+packages/
+*.nupkg
+!packages/build/
+*.nuget.props
+*.nuget.targets
+
+######################
+## IDE
+######################
+.vscode/
+.idea/
+*.swp
+*~
+.DS_Store
