@@ -4,343 +4,38 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Carbon Footprint Tracker</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-            font-size: 14px;
-            line-height: 1.5;
-            color: #333;
-            background: #f5f5f5;
-            padding: 16px;
-        }
-        
-        .container {
-            max-width: 100%;
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            padding: 20px;
-        }
-        
-        .loading {
-            text-align: center;
-            padding: 40px 20px;
-            color: #666;
-        }
-        
-        .loading-spinner {
-            display: inline-block;
-            width: 40px;
-            height: 40px;
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #3498db;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin-bottom: 16px;
-        }
-        
-        @@keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        
-        .error {
-            background: #fee;
-            border: 1px solid #fcc;
-            border-radius: 4px;
-            padding: 16px;
-            color: #c33;
-            margin-bottom: 16px;
-        }
-        
-        .score-badge {
-            text-align: center;
-            margin-bottom: 24px;
-        }
-        
-        .score-circle {
-            width: 120px;
-            height: 120px;
-            margin: 0 auto 12px;
-            position: relative;
-        }
-        
-        .score-circle svg {
-            transform: rotate(-90deg);
-        }
-        
-        .score-circle-bg {
-            fill: none;
-            stroke: #eee;
-            stroke-width: 12;
-        }
-        
-        .score-circle-fill {
-            fill: none;
-            stroke-width: 12;
-            stroke-linecap: round;
-            transition: stroke-dashoffset 0.5s ease;
-        }
-        
-        .score-letter {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 48px;
-            font-weight: bold;
-        }
-        
-        .score-A { color: #22c55e; }
-        .score-A .score-circle-fill { stroke: #22c55e; }
-        .score-B { color: #84cc16; }
-        .score-B .score-circle-fill { stroke: #84cc16; }
-        .score-C { color: #eab308; }
-        .score-C .score-circle-fill { stroke: #eab308; }
-        .score-D { color: #f97316; }
-        .score-D .score-circle-fill { stroke: #f97316; }
-        .score-F { color: #ef4444; }
-        .score-F .score-circle-fill { stroke: #ef4444; }
-        
-        .score-details {
-            font-size: 16px;
-            color: #666;
-        }
-        
-        .score-co2 {
-            font-size: 20px;
-            font-weight: 600;
-            color: #333;
-            margin-top: 8px;
-        }
-        
-        .section-title {
-            font-size: 16px;
-            font-weight: 600;
-            margin-bottom: 12px;
-            color: #333;
-            border-bottom: 2px solid #eee;
-            padding-bottom: 8px;
-        }
-        
-        .asset-breakdown {
-            margin-bottom: 24px;
-        }
-        
-        .asset-bar {
-            display: flex;
-            height: 32px;
-            border-radius: 4px;
-            overflow: hidden;
-            margin-bottom: 12px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-        }
-        
-        .asset-segment {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 11px;
-            font-weight: 500;
-            text-shadow: 0 1px 2px rgba(0,0,0,0.3);
-            transition: all 0.2s;
-            cursor: help;
-        }
-        
-        .asset-segment:hover {
-            filter: brightness(1.1);
-        }
-        
-        .cat-HTML { background: #3b82f6; }
-        .cat-CSS { background: #8b5cf6; }
-        .cat-JavaScript { background: #f59e0b; }
-        .cat-Images { background: #10b981; }
-        .cat-Fonts { background: #ec4899; }
-        .cat-Video { background: #ef4444; }
-        .cat-Other { background: #6b7280; }
-        
-        .asset-legend {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-            gap: 8px;
-            font-size: 12px;
-        }
-        
-        .legend-item {
-            display: flex;
-            align-items: center;
-            padding: 6px;
-            background: #f9fafb;
-            border-radius: 4px;
-        }
-        
-        .legend-color {
-            width: 16px;
-            height: 16px;
-            border-radius: 3px;
-            margin-right: 8px;
-            flex-shrink: 0;
-        }
-        
-        .legend-info {
-            flex: 1;
-            min-width: 0;
-        }
-        
-        .legend-name {
-            font-weight: 500;
-            color: #333;
-        }
-        
-        .legend-size {
-            color: #666;
-            font-size: 11px;
-        }
-        
-        .suggestions {
-            margin-bottom: 24px;
-        }
-        
-        .suggestion {
-            background: #fff;
-            border: 1px solid #e5e7eb;
-            border-radius: 6px;
-            margin-bottom: 12px;
-            overflow: hidden;
-        }
-        
-        .suggestion-header {
-            display: flex;
-            align-items: center;
-            padding: 12px;
-            cursor: pointer;
-            user-select: none;
-            transition: background 0.2s;
-        }
-        
-        .suggestion-header:hover {
-            background: #f9fafb;
-        }
-        
-        .severity-badge {
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 11px;
-            font-weight: 600;
-            margin-right: 12px;
-            flex-shrink: 0;
-        }
-        
-        .severity-Critical {
-            background: #fee2e2;
-            color: #991b1b;
-        }
-        
-        .severity-High {
-            background: #fed7aa;
-            color: #9a3412;
-        }
-        
-        .severity-Medium {
-            background: #fef3c7;
-            color: #92400e;
-        }
-        
-        .severity-Low {
-            background: #e0e7ff;
-            color: #3730a3;
-        }
-        
-        .suggestion-title {
-            flex: 1;
-            font-weight: 500;
-            color: #333;
-        }
-        
-        .suggestion-savings {
-            font-size: 12px;
-            color: #10b981;
-            margin-right: 8px;
-        }
-        
-        .suggestion-body {
-            display: none;
-            padding: 0 12px 12px;
-            font-size: 13px;
-            color: #666;
-            line-height: 1.6;
-        }
-        
-        .suggestion.open .suggestion-body {
-            display: block;
-        }
-        
-        .actions {
-            display: flex;
-            gap: 8px;
-            margin-top: 16px;
-        }
-        
-        .btn {
-            flex: 1;
-            padding: 10px 16px;
-            border: none;
-            border-radius: 6px;
-            font-size: 14px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        
-        .btn-primary {
-            background: #3b82f6;
-            color: white;
-        }
-        
-        .btn-primary:hover {
-            background: #2563eb;
-        }
-        
-        .btn-secondary {
-            background: #f3f4f6;
-            color: #374151;
-        }
-        
-        .btn-secondary:hover {
-            background: #e5e7eb;
-        }
-        
-        .comparison {
-            font-size: 12px;
-            color: #666;
-            margin-top: 4px;
-        }
-    </style>
+    <link rel="stylesheet" href="/carbon-tracker-assets/carbon-tracker/styles.css" />
 </head>
 <body>
     <div class="container">
+        <!-- Loading State with skeleton shimmer -->
         <div id="loading" class="loading">
-            <div class="loading-spinner"></div>
+            <div class="skeleton skeleton-circle"></div>
+            <div class="skeleton skeleton-line short"></div>
+            <div class="skeleton skeleton-line short"></div>
+            <div class="skeleton skeleton-bar"></div>
             <div>Analyzing page carbon footprint...</div>
         </div>
-        
+
+        <!-- Error State -->
         <div id="error" class="error" style="display: none;"></div>
-        
+
+        <!-- Not Published State -->
+        <div id="notPublished" class="not-published" style="display: none;">
+            <div class="not-published-icon">📄</div>
+            <div>No published version available.</div>
+            <div style="font-size:12px;color:#aaa;margin-top:4px;">Publish the page to see its carbon footprint.</div>
+        </div>
+
+        <!-- Report Content -->
         <div id="report" style="display: none;">
-            <!-- Score Badge -->
+            <!-- Section A: Green Score Badge -->
             <div class="score-badge">
                 <div class="score-circle" id="scoreCircle">
                     <svg width="120" height="120">
                         <circle class="score-circle-bg" cx="60" cy="60" r="54"></circle>
-                        <circle class="score-circle-fill" cx="60" cy="60" r="54" 
-                                stroke-dasharray="339.292" stroke-dashoffset="0" id="scoreProgress"></circle>
+                        <circle class="score-circle-fill" cx="60" cy="60" r="54"
+                                stroke-dasharray="339.292" stroke-dashoffset="339.292" id="scoreProgress"></circle>
                     </svg>
                     <div class="score-letter" id="scoreLetter">-</div>
                 </div>
@@ -348,208 +43,44 @@
                 <div class="score-co2" id="scoreCO2">0g</div>
                 <div class="comparison" id="scoreComparison"></div>
             </div>
-            
-            <!-- Asset Breakdown -->
+
+            <!-- Section B: Asset Breakdown -->
             <div class="asset-breakdown">
                 <h3 class="section-title">Asset Breakdown</h3>
                 <div class="asset-bar" id="assetBar"></div>
                 <div class="asset-legend" id="assetLegend"></div>
             </div>
-            
-            <!-- Optimization Suggestions -->
+
+            <!-- Section C: Optimization Suggestions (accordion) -->
             <div class="suggestions">
                 <h3 class="section-title">Optimization Suggestions</h3>
                 <div id="suggestionsList"></div>
             </div>
-            
-            <!-- Actions -->
+
+            <!-- Section D: Historical Trend Sparkline -->
+            <div class="trend-section">
+                <h3 class="section-title">Trend (Last 30 Days)</h3>
+                <div class="sparkline-container" id="sparklineContainer">
+                    <div class="no-history">Loading history...</div>
+                </div>
+            </div>
+
+            <!-- Section E: Action Buttons -->
             <div class="actions">
-                <button class="btn btn-primary" onclick="reanalyze()">Re-analyze</button>
-                <button class="btn btn-secondary" onclick="exportReport()">Export CSV</button>
+                <button class="btn btn-primary" id="btnReanalyze">🔄 Re-analyze</button>
+                <button class="btn btn-secondary" id="btnExport">📥 Export CSV</button>
+            </div>
+            <div class="actions" style="margin-top:8px;">
+                <a class="btn btn-link" href="/api/carbon-tracker/site-summary" target="_blank">📊 Full Dashboard</a>
             </div>
         </div>
     </div>
-    
+
     <script>
-        let currentReport = null;
-        const pageUrl = '@ViewBag.PageUrl';
-        const contentLink = '@ViewBag.ContentLink';
-        
-        // Load report on page load
-        window.addEventListener('load', loadReport);
-        
-        async function loadReport() {
-            try {
-                showLoading();
-                
-                // Get page URL from parent window or ViewBag
-                const urlToAnalyze = pageUrl || window.location.origin;
-                
-                const response = await fetch(`/api/carbon-tracker/analyze?pageUrl=${encodeURIComponent(urlToAnalyze)}`);
-                
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                
-                const report = await response.json();
-                currentReport = report;
-                displayReport(report);
-            } catch (error) {
-                showError(error.message);
-            }
-        }
-        
-        function showLoading() {
-            document.getElementById('loading').style.display = 'block';
-            document.getElementById('error').style.display = 'none';
-            document.getElementById('report').style.display = 'none';
-        }
-        
-        function showError(message) {
-            document.getElementById('loading').style.display = 'none';
-            document.getElementById('error').style.display = 'block';
-            document.getElementById('error').textContent = `Error: ${message}`;
-        }
-        
-        function displayReport(report) {
-            document.getElementById('loading').style.display = 'none';
-            document.getElementById('report').style.display = 'block';
-            
-            // Display score
-            const score = report.score;
-            const co2 = report.estimatedCO2Grams.toFixed(2);
-            
-            const scoreCircle = document.getElementById('scoreCircle');
-            scoreCircle.className = `score-circle score-${score}`;
-            document.getElementById('scoreLetter').textContent = score;
-            document.getElementById('scoreCO2').textContent = `${co2}g CO₂`;
-            
-            // Set circle progress (full circle for better visual)
-            const progress = document.getElementById('scoreProgress');
-            progress.style.strokeDashoffset = '0';
-            
-            // Add comparison text
-            const comparison = getComparison(report.estimatedCO2Grams);
-            document.getElementById('scoreComparison').textContent = comparison;
-            
-            // Display asset breakdown
-            displayAssetBreakdown(report.assets);
-            
-            // Display suggestions
-            displaySuggestions(report.suggestions);
-        }
-        
-        function displayAssetBreakdown(assets) {
-            const bar = document.getElementById('assetBar');
-            const legend = document.getElementById('assetLegend');
-            
-            bar.innerHTML = '';
-            legend.innerHTML = '';
-            
-            assets.forEach(asset => {
-                // Add to bar
-                const segment = document.createElement('div');
-                segment.className = `asset-segment cat-${asset.category}`;
-                segment.style.width = `${asset.percentage}%`;
-                segment.title = `${asset.category}: ${formatBytes(asset.transferSizeBytes)}`;
-                if (asset.percentage > 5) {
-                    segment.textContent = `${Math.round(asset.percentage)}%`;
-                }
-                bar.appendChild(segment);
-                
-                // Add to legend
-                const item = document.createElement('div');
-                item.className = 'legend-item';
-                item.innerHTML = `
-                    <div class="legend-color cat-${asset.category}"></div>
-                    <div class="legend-info">
-                        <div class="legend-name">${asset.category}</div>
-                        <div class="legend-size">${formatBytes(asset.transferSizeBytes)} (${asset.resourceCount})</div>
-                    </div>
-                `;
-                legend.appendChild(item);
-            });
-        }
-        
-        function displaySuggestions(suggestions) {
-            const list = document.getElementById('suggestionsList');
-            list.innerHTML = '';
-            
-            if (suggestions.length === 0) {
-                list.innerHTML = '<div style="text-align: center; color: #10b981; padding: 20px;">✓ No optimization suggestions - great job!</div>';
-                return;
-            }
-            
-            suggestions.forEach(suggestion => {
-                const div = document.createElement('div');
-                div.className = 'suggestion';
-                div.innerHTML = `
-                    <div class="suggestion-header" onclick="toggleSuggestion(this)">
-                        <span class="severity-badge severity-${suggestion.severity}">${suggestion.severity}</span>
-                        <span class="suggestion-title">${suggestion.title}</span>
-                        ${suggestion.potentialCO2SavingsGrams > 0 ? 
-                            `<span class="suggestion-savings">-${suggestion.potentialCO2SavingsGrams.toFixed(2)}g</span>` : ''}
-                        <span>▼</span>
-                    </div>
-                    <div class="suggestion-body">${suggestion.description}</div>
-                `;
-                list.appendChild(div);
-            });
-        }
-        
-        function toggleSuggestion(header) {
-            header.parentElement.classList.toggle('open');
-        }
-        
-        function getComparison(co2Grams) {
-            if (co2Grams <= 0.20) {
-                return 'Excellent! Cleaner than 95% of web pages.';
-            } else if (co2Grams <= 0.50) {
-                return 'Good! Better than average web page.';
-            } else if (co2Grams <= 1.00) {
-                return 'Average carbon footprint.';
-            } else if (co2Grams <= 2.00) {
-                return 'Higher than average. Consider optimizations.';
-            } else {
-                return 'Very high carbon footprint. Urgent optimizations needed.';
-            }
-        }
-        
-        function formatBytes(bytes) {
-            if (bytes < 1024) return bytes + ' B';
-            if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
-            return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
-        }
-        
-        function reanalyze() {
-            loadReport();
-        }
-        
-        function exportReport() {
-            if (!currentReport) return;
-            
-            // Create CSV content
-            let csv = 'Carbon Footprint Report\\n\\n';
-            csv += `Score,${currentReport.score}\\n`;
-            csv += `CO2 (grams),${currentReport.estimatedCO2Grams.toFixed(2)}\\n`;
-            csv += `Total Size (bytes),${currentReport.totalTransferSizeBytes}\\n`;
-            csv += `Analyzed At,${currentReport.analyzedAt}\\n\\n`;
-            
-            csv += 'Asset Breakdown\\n';
-            csv += 'Category,Size (bytes),Percentage,CO2 (grams),Count\\n';
-            currentReport.assets.forEach(asset => {
-                csv += `${asset.category},${asset.transferSizeBytes},${asset.percentage.toFixed(2)}%,${asset.estimatedCO2Grams.toFixed(2)},${asset.resourceCount}\\n`;
-            });
-            
-            // Download
-            const blob = new Blob([csv], { type: 'text/csv' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `carbon-report-${new Date().toISOString().split('T')[0]}.csv`;
-            a.click();
-            URL.revokeObjectURL(url);
-        }
+        // Pass server-side values to client JS
+        window.__carbonTracker_contentLink = '@ViewBag.ContentLink';
+        window.__carbonTracker_pageUrl = '@ViewBag.PageUrl';
     </script>
+    <script src="/carbon-tracker-assets/carbon-tracker/app.js"></script>
 </body>
 </html>
