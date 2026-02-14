@@ -3,6 +3,8 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Optimizely.CarbonTracker.Analysis;
 using Optimizely.CarbonTracker.Calculation;
 using Optimizely.CarbonTracker.Configuration;
+using Optimizely.CarbonTracker.Initialization;
+using Optimizely.CarbonTracker.Persistence;
 
 namespace Optimizely.CarbonTracker;
 
@@ -27,21 +29,29 @@ public static class ServiceCollectionExtensions
         {
             services.Configure<CarbonTrackerOptions>(options => { });
         }
-        
+
         // Register HttpClient for page analysis
         services.AddHttpClient<IPageAnalyzer, PageAnalyzer>()
             .ConfigureHttpClient(client =>
             {
                 client.DefaultRequestHeaders.Add("User-Agent", "Optimizely-CarbonTracker/1.0");
             });
-        
+
         // Register core services
         services.TryAddScoped<ICarbonCalculator, CarbonCalculator>();
         services.TryAddScoped<IImageAnalyzer, ImageAnalyzer>();
         services.TryAddScoped<IScriptAnalyzer, ScriptAnalyzer>();
         services.TryAddScoped<IVideoAnalyzer, VideoAnalyzer>();
         services.TryAddScoped<ICarbonReportService, CarbonReportService>();
-        
+
+        // Register persistence
+        services.TryAddSingleton<ICarbonReportRepository, CarbonReportRepository>();
+
+        // Register CMS hooks
+        services.TryAddScoped<IContentEventHandler, ContentEventHandler>();
+        services.TryAddSingleton<CarbonAnalysisScheduledJob>();
+        services.TryAddSingleton<CarbonTrackerInitializationModule>();
+
         return services;
     }
 }
