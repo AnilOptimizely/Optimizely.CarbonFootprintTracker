@@ -52,6 +52,9 @@ public static class ServiceCollectionExtensions
         services.TryAddSingleton<CarbonAnalysisScheduledJob>();
         services.TryAddSingleton<CarbonTrackerInitializationModule>();
 
+        // Register IFrame component for CMS editor panel auto-discovery
+        services.TryAddSingleton<IIFrameComponent, CarbonTrackerComponent>();
+
         return services;
     }
 }

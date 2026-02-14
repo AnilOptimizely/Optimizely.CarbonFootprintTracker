@@ -80,6 +80,9 @@
         // Pass server-side values to client JS
         window.__carbonTracker_contentLink = '@ViewBag.ContentLink';
         window.__carbonTracker_pageUrl = '@ViewBag.PageUrl';
+        // Pre-loaded cached report data (if available) for instant rendering
+        window.__carbonTracker_cachedScore = '@ViewBag.CachedScore';
+        window.__carbonTracker_cachedCO2 = '@ViewBag.CachedCO2';
     </script>
     <script src="/carbon-tracker-assets/carbon-tracker/app.js"></script>
 </body>

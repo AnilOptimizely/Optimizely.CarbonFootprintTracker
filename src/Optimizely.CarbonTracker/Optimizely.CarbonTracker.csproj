@@ -12,7 +12,12 @@
     <PackageTags>optimizely;cms;carbon;sustainability;green-web</PackageTags>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <RepositoryUrl>https://github.com/AnilOptimizely/Optimizely.CarbonFootprintTracker</RepositoryUrl>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
 
   <ItemGroup>
     <!-- Optimizely packages are optional - uncomment when publishing to environments with Optimizely feed access -->

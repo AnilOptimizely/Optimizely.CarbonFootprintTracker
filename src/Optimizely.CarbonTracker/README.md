@@ -36,13 +36,22 @@ Add Carbon Tracker to your `Startup.cs` or `Program.cs`:
 services.AddCarbonTracker(options =>
 {
     options.GreenHosting = true; // Set to true if using green hosting
-    options.GridIntensityGramsCO2PerKWh = 442; // Regional grid carbon intensity
+    options.GridIntensityGramsCO2PerKWh = 300; // e.g., Sweden — see electricitymaps.com for regional values
     options.EnableRealTimeAnalysis = true;
     options.HistoryRetentionDays = 365;
 });
 ```
 
-That's it! The add-on will automatically register with Optimizely CMS.
+Then register the middleware in the application pipeline:
+
+```csharp
+// In Configure or app pipeline
+app.UseCarbonTracker(); // Registers static file serving for embedded assets
+```
+
+That's it! The add-on will automatically register with Optimizely CMS. The IFrame component
+auto-registers via the module initializer so editors see the Carbon Footprint panel
+immediately after installing the NuGet package.
 
 ## Configuration Options
 
