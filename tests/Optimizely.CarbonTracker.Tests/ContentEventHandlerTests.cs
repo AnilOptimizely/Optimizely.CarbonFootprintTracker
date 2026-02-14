@@ -62,7 +62,7 @@ public class ContentEventHandlerTests
     }
 
     [Fact]
-    public async Task CheckCarbonThreshold_NoReport_ApprovesbyDefault()
+    public async Task CheckCarbonThreshold_NoReport_ApprovesByDefault()
     {
         _mockRepository.Setup(r => r.GetLatestReportAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync((PageCarbonReport?)null);

@@ -223,7 +223,7 @@
         list.innerHTML = '';
 
         if (!suggestions.length) {
-            list.innerHTML = '<div style="text-align:center;color:#10b981;padding:20px;">\u2713 No optimization suggestions \u2014 great job!</div>';
+            list.innerHTML = '<div class="no-suggestions">\u2713 No optimization suggestions \u2014 great job!</div>';
             return;
         }
 

@@ -12,6 +12,7 @@ public class CarbonReportRepository : ICarbonReportRepository
 {
     private readonly ConcurrentDictionary<int, PageCarbonReport> _reports = new();
     private readonly ICarbonCalculator _calculator;
+    private readonly object _saveLock = new();
     private int _nextId;
 
     public CarbonReportRepository(ICarbonCalculator calculator)
@@ -22,12 +23,16 @@ public class CarbonReportRepository : ICarbonReportRepository
     /// <inheritdoc/>
     public Task SaveReportAsync(PageCarbonReport report, CancellationToken cancellationToken = default)
     {
-        if (report.Id == 0)
+        lock (_saveLock)
         {
-            report.Id = Interlocked.Increment(ref _nextId);
+            if (report.Id == 0)
+            {
+                report.Id = Interlocked.Increment(ref _nextId);
+            }
+
+            _reports[report.Id] = report;
         }
 
-        _reports[report.Id] = report;
         return Task.CompletedTask;
     }
 
