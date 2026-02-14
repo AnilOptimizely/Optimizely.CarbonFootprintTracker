@@ -1,0 +1,11 @@
+<Solution>
+  <Folder Name="/examples/">
+    <Project Path="examples/CarbonTracker.Demo/CarbonTracker.Demo.csproj" />
+  </Folder>
+  <Folder Name="/src/">
+    <Project Path="src/Optimizely.CarbonTracker/Optimizely.CarbonTracker.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Optimizely.CarbonTracker.Tests/Optimizely.CarbonTracker.Tests.csproj" />
+  </Folder>
+</Solution>
