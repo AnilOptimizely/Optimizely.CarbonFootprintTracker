@@ -36,7 +36,7 @@ Add Carbon Tracker to your `Startup.cs` or `Program.cs`:
 services.AddCarbonTracker(options =>
 {
     options.GreenHosting = true; // Set to true if using green hosting
-    options.GridIntensityGramsCO2PerKWh = 300; // e.g., Sweden
+    options.GridIntensityGramsCO2PerKWh = 300; // e.g., Sweden — see electricitymaps.com for regional values
     options.EnableRealTimeAnalysis = true;
     options.HistoryRetentionDays = 365;
 });

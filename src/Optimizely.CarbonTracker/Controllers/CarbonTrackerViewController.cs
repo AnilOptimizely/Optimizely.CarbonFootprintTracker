@@ -30,8 +30,14 @@ public class CarbonTrackerViewController : Controller
     private readonly ICarbonReportRepository? _repository;
 
     /// <summary>
-    /// Creates a new instance with repository injection for server-side report pre-loading.
+    /// Creates a new instance of the IFrame component controller.
     /// </summary>
+    /// <param name="repository">
+    /// Optional. When provided, the controller pre-loads the latest cached report so the panel
+    /// renders the Green Score instantly without waiting for a client-side API fetch.
+    /// When null (e.g. before DI is configured), the panel still works — it simply falls back
+    /// to the client-side <c>app.js</c> fetch on load.
+    /// </param>
     public CarbonTrackerViewController(ICarbonReportRepository? repository = null)
     {
         _repository = repository;
