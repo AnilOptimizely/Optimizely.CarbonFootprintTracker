@@ -1,20 +1,56 @@
 namespace Optimizely.CarbonTracker.Initialization;
 
 /// <summary>
+/// Abstraction for an IFrame-based component in the CMS editor UI.
+/// Mirrors EPiServer.Shell.ViewComposition.IFrameComponent so the add-on
+/// can compile without a hard dependency on EPiServer.CMS.UI.Core.
+///
+/// When deploying to an Optimizely CMS environment, replace this with:
+/// <code>
+/// [Component]
+/// public class CarbonTrackerComponent : IFrameComponent { ... }
+/// </code>
+/// </summary>
+public interface IIFrameComponent
+{
+    /// <summary>URL loaded inside the iframe in the CMS panel</summary>
+    string Url { get; }
+
+    /// <summary>Display title in the CMS panel</summary>
+    string Title { get; }
+
+    /// <summary>Description shown in the CMS panel tooltip</summary>
+    string Description { get; }
+
+    /// <summary>Sort order for the component in the panel list</summary>
+    int SortOrder { get; }
+
+    /// <summary>Plugin areas where this component should appear (e.g. "AssetsDefaultGroup")</summary>
+    string[] PlugInAreas { get; }
+
+    /// <summary>Categories for the component (e.g. "content")</summary>
+    string[] Categories { get; }
+
+    /// <summary>Whether editors can add/remove this component from their view</summary>
+    bool IsAvailableForUserSelection { get; }
+}
+
+/// <summary>
 /// IFrameComponent descriptor for the Carbon Footprint Tracker panel in Optimizely CMS.
 ///
-/// In an Optimizely CMS environment with EPiServer.CMS.UI.Core, this would inherit from
-/// EPiServer.Shell.ViewComposition.IFrameComponent and be decorated with [Component].
+/// Provides editors with a real-time Green Score for every page, breaks down emissions
+/// by asset type (HTML, CSS, JS, Images, Fonts, Video), and surfaces actionable
+/// optimization suggestions — all inside the CMS Edit Mode sidebar.
 ///
-/// This class provides the component metadata so that the CMS shell module system
-/// can register the Carbon Tracker as a panel in Edit Mode.
-///
-/// Usage in Optimizely CMS:
+/// In an Optimizely CMS environment with EPiServer.CMS.UI.Core, decorate with
+/// <c>[Component]</c> and inherit from <c>IFrameComponent</c> so the CMS shell
+/// auto-discovers it at startup:
 /// <code>
 /// [Component]
 /// public class CarbonTrackerComponent : IFrameComponent
 /// {
-///     public CarbonTrackerComponent() : base("/CarbonTrackerView/Index")
+///     public CarbonTrackerComponent()
+///         : base("/CarbonTrackerView/Index")
 ///     {
 ///         LanguagePath = "/carbon-tracker";
 ///         Title = "Carbon Footprint";
@@ -27,11 +63,9 @@ namespace Optimizely.CarbonTracker.Initialization;
 /// }
 /// </code>
 /// </summary>
-public class CarbonTrackerComponent
+public class CarbonTrackerComponent : IIFrameComponent
 {
-    /// <summary>
-    /// URL loaded inside the iframe in the CMS panel
-    /// </summary>
+    /// <inheritdoc/>
     public string Url { get; } = "/CarbonTrackerView/Index";
 
     /// <summary>
@@ -39,33 +73,21 @@ public class CarbonTrackerComponent
     /// </summary>
     public string LanguagePath { get; set; } = "/carbon-tracker";
 
-    /// <summary>
-    /// Display title in the CMS panel
-    /// </summary>
+    /// <inheritdoc/>
     public string Title { get; set; } = "Carbon Footprint";
 
-    /// <summary>
-    /// Description shown in the CMS panel
-    /// </summary>
+    /// <inheritdoc/>
     public string Description { get; set; } = "Real-time carbon footprint analysis and Green Score for the current page.";
 
-    /// <summary>
-    /// Sort order for the component in the panel
-    /// </summary>
+    /// <inheritdoc/>
     public int SortOrder { get; set; } = 1000;
 
-    /// <summary>
-    /// Plugin areas where this component should appear
-    /// </summary>
+    /// <inheritdoc/>
     public string[] PlugInAreas { get; set; } = new[] { "AssetsDefaultGroup" };
 
-    /// <summary>
-    /// Categories for the component
-    /// </summary>
+    /// <inheritdoc/>
     public string[] Categories { get; set; } = new[] { "content" };
 
-    /// <summary>
-    /// Whether users can add/remove this component from their view
-    /// </summary>
+    /// <inheritdoc/>
     public bool IsAvailableForUserSelection { get; set; } = true;
 }
