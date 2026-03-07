@@ -1,4 +1,5 @@
-using System.Collections.Concurrent;
+using Microsoft.EntityFrameworkCore;
+using Optimizely.CarbonTracker.Data;
 using Optimizely.CarbonTracker.Models;
 
 namespace Optimizely.CarbonTracker.Services;
@@ -41,67 +42,70 @@ public interface ICarbonReportRepository
 
 
 /// <summary>
-/// In-memory implementation of ICarbonReportRepository.
-/// Replace with EF Core / DDS-backed implementation for production use.
+/// EF Core implementation of ICarbonReportRepository for production use.
 /// </summary>
-public class CarbonReportRepositoryService(ICarbonCalculatorService calculator) : ICarbonReportRepository
+public class CarbonReportRepositoryService(
+    CarbonTrackerDbContext dbContext,
+    ICarbonCalculatorService calculator) : ICarbonReportRepository
 {
-    private readonly ConcurrentDictionary<int, PageCarbonReport> _reports = new();
+    private readonly CarbonTrackerDbContext _dbContext = dbContext;
     private readonly ICarbonCalculatorService _calculator = calculator;
-    private readonly object _saveLock = new();
-    private int _nextId;
 
     /// <inheritdoc/>
-    public Task SaveReportAsync(PageCarbonReport report, CancellationToken cancellationToken = default)
+    public async Task SaveReportAsync(PageCarbonReport report, CancellationToken cancellationToken = default)
     {
-        lock (_saveLock)
+        if (report.Id == 0)
         {
-            if (report.Id == 0)
-            {
-                report.Id = Interlocked.Increment(ref _nextId);
-            }
-
-            _reports[report.Id] = report;
+            _dbContext.PageCarbonReports.Add(report);
+        }
+        else
+        {
+            _dbContext.PageCarbonReports.Update(report);
         }
 
-        return Task.CompletedTask;
+        await _dbContext.SaveChangesAsync(cancellationToken);
     }
 
     /// <inheritdoc/>
-    public Task<PageCarbonReport?> GetLatestReportAsync(Guid contentGuid, CancellationToken cancellationToken = default)
+    public async Task<PageCarbonReport?> GetLatestReportAsync(Guid contentGuid, CancellationToken cancellationToken = default)
     {
-        var report = _reports.Values
+        return await _dbContext.PageCarbonReports
+            .Include(r => r.Assets)
+            .Include(r => r.Suggestions)
             .Where(r => r.ContentGuid == contentGuid)
             .OrderByDescending(r => r.AnalyzedAt)
-            .FirstOrDefault();
-
-        return Task.FromResult(report);
+            .FirstOrDefaultAsync(cancellationToken);
     }
 
     /// <inheritdoc/>
-    public Task<List<PageCarbonReport>> GetHistoryAsync(Guid contentGuid, int days = 30, CancellationToken cancellationToken = default)
+    public async Task<List<PageCarbonReport>> GetHistoryAsync(Guid contentGuid, int days = 30, CancellationToken cancellationToken = default)
     {
         var cutoff = DateTime.UtcNow.AddDays(-days);
-        var reports = _reports.Values
+        return await _dbContext.PageCarbonReports
+            .Include(r => r.Assets)
+            .Include(r => r.Suggestions)
             .Where(r => r.ContentGuid == contentGuid && r.AnalyzedAt >= cutoff)
             .OrderByDescending(r => r.AnalyzedAt)
-            .ToList();
-
-        return Task.FromResult(reports);
+            .ToListAsync(cancellationToken);
     }
 
     /// <inheritdoc/>
-    public Task<SiteCarbonSummary> GetSiteSummaryAsync(CancellationToken cancellationToken = default)
+    public async Task<SiteCarbonSummary> GetSiteSummaryAsync(CancellationToken cancellationToken = default)
     {
-        // Get the latest report per content item
-        var latestReports = _reports.Values
+        // Use a subquery to find the latest report ID per content item (single round-trip)
+        var latestReportIds = _dbContext.PageCarbonReports
             .GroupBy(r => r.ContentGuid)
-            .Select(g => g.OrderByDescending(r => r.AnalyzedAt).First())
-            .ToList();
+            .Select(g => g.OrderByDescending(r => r.AnalyzedAt).First().Id);
+
+        var latestReports = await _dbContext.PageCarbonReports
+            .Include(r => r.Assets)
+            .Include(r => r.Suggestions)
+            .Where(r => latestReportIds.Contains(r.Id))
+            .ToListAsync(cancellationToken);
 
         var avgCO2 = latestReports.Count > 0 ? latestReports.Average(r => r.EstimatedCO2Grams) : 0;
 
-        var summary = new SiteCarbonSummary
+        return new SiteCarbonSummary
         {
             TotalPagesAnalyzed = latestReports.Count,
             AverageCO2PerPage = avgCO2,
@@ -111,32 +115,27 @@ public class CarbonReportRepositoryService(ICarbonCalculatorService calculator) 
             BestPages = latestReports.OrderBy(r => r.EstimatedCO2Grams).Take(5).ToList(),
             GeneratedAt = DateTime.UtcNow
         };
-
-        return Task.FromResult(summary);
     }
 
     /// <inheritdoc/>
-    public Task CleanupOldReportsAsync(int retentionDays, CancellationToken cancellationToken = default)
+    public async Task CleanupOldReportsAsync(int retentionDays, CancellationToken cancellationToken = default)
     {
         var cutoff = DateTime.UtcNow.AddDays(-retentionDays);
-        var toRemove = _reports.Where(kvp => kvp.Value.AnalyzedAt < cutoff).Select(kvp => kvp.Key).ToList();
-        foreach (var key in toRemove)
-        {
-            _reports.TryRemove(key, out _);
-        }
+        var oldReports = await _dbContext.PageCarbonReports
+            .Where(r => r.AnalyzedAt < cutoff)
+            .ToListAsync(cancellationToken);
 
-        return Task.CompletedTask;
+        _dbContext.PageCarbonReports.RemoveRange(oldReports);
+        await _dbContext.SaveChangesAsync(cancellationToken);
     }
 
     /// <inheritdoc/>
-    public Task<List<Guid>> GetAllTrackedContentGuidsAsync(CancellationToken cancellationToken = default)
+    public async Task<List<Guid>> GetAllTrackedContentGuidsAsync(CancellationToken cancellationToken = default)
     {
-        var guids = _reports.Values
+        return await _dbContext.PageCarbonReports
+            .Where(r => r.ContentGuid != Guid.Empty)
             .Select(r => r.ContentGuid)
-            .Where(g => g != Guid.Empty)
             .Distinct()
-            .ToList();
-
-        return Task.FromResult(guids);
+            .ToListAsync(cancellationToken);
     }
 }

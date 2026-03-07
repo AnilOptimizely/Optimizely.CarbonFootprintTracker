@@ -1,13 +1,16 @@
+using Microsoft.EntityFrameworkCore;
 using Moq;
+using Optimizely.CarbonTracker.Data;
 using Optimizely.CarbonTracker.Models;
 using Optimizely.CarbonTracker.Services;
 using Xunit;
 
 namespace Optimizely.CarbonTracker.Tests.Persistence;
 
-public class CarbonReportRepositoryTests
+public class CarbonReportRepositoryTests : IDisposable
 {
     private readonly Mock<ICarbonCalculatorService> _mockCalculator;
+    private readonly CarbonTrackerDbContext _dbContext;
     private readonly CarbonReportRepositoryService _repository;
 
     public CarbonReportRepositoryTests()
@@ -15,7 +18,18 @@ public class CarbonReportRepositoryTests
         _mockCalculator = new Mock<ICarbonCalculatorService>();
         _mockCalculator.Setup(c => c.CalculateGreenScore(It.IsAny<double>()))
             .Returns(GreenScore.C);
-        _repository = new CarbonReportRepositoryService(_mockCalculator.Object);
+
+        var options = new DbContextOptionsBuilder<CarbonTrackerDbContext>()
+            .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
+            .Options;
+
+        _dbContext = new CarbonTrackerDbContext(options);
+        _repository = new CarbonReportRepositoryService(_dbContext, _mockCalculator.Object);
+    }
+
+    public void Dispose()
+    {
+        _dbContext.Dispose();
     }
 
     [Fact]

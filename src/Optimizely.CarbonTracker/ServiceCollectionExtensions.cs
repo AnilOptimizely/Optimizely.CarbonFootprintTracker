@@ -1,8 +1,10 @@
 using EPiServer.Shell.Modules;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Optimizely.CarbonTracker.Analysis;
 using Optimizely.CarbonTracker.Configuration;
+using Optimizely.CarbonTracker.Data;
 using Optimizely.CarbonTracker.Initialization;
 using Optimizely.CarbonTracker.Services;
 
@@ -18,7 +20,8 @@ public static class ServiceCollectionExtensions
     /// </summary>
     public static IServiceCollection AddCarbonTracker(
         this IServiceCollection services,
-        Action<CarbonTrackerOptions>? configure = null)
+        Action<CarbonTrackerOptions>? configure = null,
+        Action<DbContextOptionsBuilder>? configureDb = null)
     {
         // Configure options
         if (configure != null)
@@ -30,6 +33,16 @@ public static class ServiceCollectionExtensions
             services.Configure<CarbonTrackerOptions>(options => { });
         }
         services.Configure<ProtectedModuleOptions>(o => o.Items.Add(new ModuleDetails { Name = "Optimizely.CarbonFootprintTracker" }));
+
+        // Register EF Core DbContext
+        services.AddDbContext<CarbonTrackerDbContext>(options =>
+        {
+            if (configureDb != null)
+            {
+                configureDb(options);
+            }
+        });
+
         // Register HttpClient for page analysis
         services.AddHttpClient<IPageAnalysisService, PageAnalysisService>()
             .ConfigureHttpClient(client =>
@@ -44,8 +57,8 @@ public static class ServiceCollectionExtensions
         services.TryAddScoped<IVideoAnalyzer, VideoAnalyzer>();
         services.TryAddScoped<ICarbonReportService, CarbonReportService>();
 
-        // Register persistence
-        services.TryAddSingleton<ICarbonReportRepository, CarbonReportRepositoryService>();
+        // Register persistence (Scoped to match DbContext lifetime)
+        services.TryAddScoped<ICarbonReportRepository, CarbonReportRepositoryService>();
 
         // Register CMS hooks
         services.TryAddScoped<IContentEventHandler, ContentEventHandler>();

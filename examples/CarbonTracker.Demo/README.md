@@ -37,11 +37,16 @@ Visit any of these endpoints:
 
 ```csharp
 // In Program.cs
-builder.Services.AddCarbonTracker(options =>
-{
-    options.GreenHosting = false; // Set to true if using green hosting
-    options.GridIntensityGramsCO2PerKWh = 442; // Global average
-});
+builder.Services.AddCarbonTracker(
+    configure: options =>
+    {
+        options.GreenHosting = false; // Set to true if using green hosting
+        options.GridIntensityGramsCO2PerKWh = 442; // Global average
+    },
+    configureDb: dbOptions =>
+    {
+        dbOptions.UseSqlServer(connectionString);
+    });
 ```
 
 That's all you need! The Carbon Tracker automatically:

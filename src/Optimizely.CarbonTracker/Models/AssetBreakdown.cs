@@ -6,6 +6,16 @@ namespace Optimizely.CarbonTracker.Models;
 public class AssetBreakdown
 {
     /// <summary>
+    /// Unique identifier
+    /// </summary>
+    public int Id { get; set; }
+
+    /// <summary>
+    /// Foreign key to the parent report
+    /// </summary>
+    public int PageCarbonReportId { get; set; }
+
+    /// <summary>
     /// Asset category type
     /// </summary>
     public AssetCategory Category { get; set; }

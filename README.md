@@ -32,12 +32,17 @@ Add to your `Program.cs` or `Startup.cs`:
 // Minimal configuration
 services.AddCarbonTracker();
 
-// Or with custom options
-services.AddCarbonTracker(options =>
-{
-    options.GreenHosting = true; // If using green/renewable energy hosting
-    options.GridIntensityGramsCO2PerKWh = 300; // Your region's grid intensity
-});
+// Or with custom options and database configuration
+services.AddCarbonTracker(
+    configure: options =>
+    {
+        options.GreenHosting = true; // If using green/renewable energy hosting
+        options.GridIntensityGramsCO2PerKWh = 300; // Your region's grid intensity
+    },
+    configureDb: dbOptions =>
+    {
+        dbOptions.UseSqlServer(connectionString);
+    });
 ```
 
 That's it! The Carbon Tracker will automatically integrate with your Optimizely CMS.
