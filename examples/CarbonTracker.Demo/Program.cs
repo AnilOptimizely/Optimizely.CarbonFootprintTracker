@@ -1,13 +1,21 @@
+using Microsoft.EntityFrameworkCore;
 using Optimizely.CarbonTracker;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add Carbon Tracker services
-builder.Services.AddCarbonTracker(options =>
-{
-    options.GreenHosting = false;
-    options.GridIntensityGramsCO2PerKWh = 442; // Global average
-});
+// Add Carbon Tracker services with EF Core database configuration
+builder.Services.AddCarbonTracker(
+    configure: options =>
+    {
+        options.GreenHosting = false;
+        options.GridIntensityGramsCO2PerKWh = 442; // Global average
+    },
+    configureDb: dbOptions =>
+    {
+        dbOptions.UseSqlServer(
+            builder.Configuration.GetConnectionString("CarbonTrackerDb")
+            ?? "Server=(localdb)\\mssqllocaldb;Database=CarbonTracker;Trusted_Connection=True;");
+    });
 
 // Add controllers and views
 builder.Services.AddControllersWithViews();
@@ -88,11 +96,16 @@ app.MapGet("/", () => Results.Content(@"
     <div class=""card"">
         <h3>Setup Code</h3>
         <pre>// Program.cs
-builder.Services.AddCarbonTracker(options =>
-{
-    options.GreenHosting = false;
-    options.GridIntensityGramsCO2PerKWh = 442;
-});</pre>
+builder.Services.AddCarbonTracker(
+    configure: options =>
+    {
+        options.GreenHosting = false;
+        options.GridIntensityGramsCO2PerKWh = 442;
+    },
+    configureDb: dbOptions =>
+    {
+        dbOptions.UseSqlServer(connectionString);
+    });</pre>
     </div>
     
     <div class=""card"">

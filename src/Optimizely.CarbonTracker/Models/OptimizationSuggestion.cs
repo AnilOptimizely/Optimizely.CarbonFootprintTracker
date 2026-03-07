@@ -6,6 +6,16 @@ namespace Optimizely.CarbonTracker.Models;
 public class OptimizationSuggestion
 {
     /// <summary>
+    /// Unique identifier
+    /// </summary>
+    public int Id { get; set; }
+
+    /// <summary>
+    /// Foreign key to the parent report
+    /// </summary>
+    public int PageCarbonReportId { get; set; }
+
+    /// <summary>
     /// Severity level of this suggestion
     /// </summary>
     public SuggestionSeverity Severity { get; set; }
