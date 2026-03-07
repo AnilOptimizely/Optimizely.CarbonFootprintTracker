@@ -92,11 +92,10 @@ public class CarbonReportRepositoryService(
     /// <inheritdoc/>
     public async Task<SiteCarbonSummary> GetSiteSummaryAsync(CancellationToken cancellationToken = default)
     {
-        // Get the latest report per content item
-        var latestReportIds = await _dbContext.PageCarbonReports
+        // Use a subquery to find the latest report ID per content item (single round-trip)
+        var latestReportIds = _dbContext.PageCarbonReports
             .GroupBy(r => r.ContentGuid)
-            .Select(g => g.OrderByDescending(r => r.AnalyzedAt).First().Id)
-            .ToListAsync(cancellationToken);
+            .Select(g => g.OrderByDescending(r => r.AnalyzedAt).First().Id);
 
         var latestReports = await _dbContext.PageCarbonReports
             .Include(r => r.Assets)
