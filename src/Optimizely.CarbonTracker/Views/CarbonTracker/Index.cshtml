@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Carbon Footprint Tracker</title>
-    <link rel="stylesheet" href="/carbon-tracker-assets/carbon-tracker/styles.css" />
+    <link rel="stylesheet" href="/_content/Optimizely.CarbonTracker/styles.css" >
 </head>
 <body>
     <div class="container">
@@ -75,12 +75,11 @@
             </div>
         </div>
     </div>
-
     <script>
         // Pass server-side values to client JS
         window.__carbonTracker_contentLink = '@ViewBag.ContentLink';
         window.__carbonTracker_pageUrl = '@ViewBag.PageUrl';
     </script>
-    <script src="/carbon-tracker-assets/carbon-tracker/app.js"></script>
+    <script src="/_content/Optimizely.CarbonTracker/app.js"></script>
 </body>
 </html>

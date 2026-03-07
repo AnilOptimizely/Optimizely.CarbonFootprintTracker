@@ -1,15 +1,15 @@
 using HtmlAgilityPack;
-using Optimizely.CarbonTracker.Calculation;
 using Optimizely.CarbonTracker.Models;
+using Optimizely.CarbonTracker.Services;
 
 namespace Optimizely.CarbonTracker.Analysis;
 
 /// <summary>
 /// Analyzes JavaScript resources for optimization opportunities
 /// </summary>
-public class ScriptAnalyzer : IScriptAnalyzer
+public class ScriptAnalyzer(ICarbonCalculatorService carbonCalculator) : IScriptAnalyzer
 {
-    private readonly ICarbonCalculator _carbonCalculator;
+    private readonly ICarbonCalculatorService _carbonCalculator = carbonCalculator;
     
     // Common third-party domains
     private static readonly string[] ThirdPartyDomains = 
@@ -17,12 +17,7 @@ public class ScriptAnalyzer : IScriptAnalyzer
         "google-analytics.com", "googletagmanager.com", "facebook.net",
         "doubleclick.net", "googlesyndication.com", "amazon-adsystem.com"
     };
-    
-    public ScriptAnalyzer(ICarbonCalculator carbonCalculator)
-    {
-        _carbonCalculator = carbonCalculator;
-    }
-    
+
     public List<OptimizationSuggestion> Analyze(List<DiscoveredResource> resources, HtmlDocument htmlDoc)
     {
         var suggestions = new List<OptimizationSuggestion>();

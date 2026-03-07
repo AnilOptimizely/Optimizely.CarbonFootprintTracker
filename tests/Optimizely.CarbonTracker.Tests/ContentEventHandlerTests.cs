@@ -4,7 +4,7 @@ using Moq;
 using Optimizely.CarbonTracker.Configuration;
 using Optimizely.CarbonTracker.Initialization;
 using Optimizely.CarbonTracker.Models;
-using Optimizely.CarbonTracker.Persistence;
+using Optimizely.CarbonTracker.Services;
 using Xunit;
 
 namespace Optimizely.CarbonTracker.Tests.Initialization;

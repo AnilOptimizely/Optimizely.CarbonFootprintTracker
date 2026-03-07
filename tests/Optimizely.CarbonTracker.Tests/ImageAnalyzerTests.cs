@@ -1,9 +1,9 @@
 using HtmlAgilityPack;
 using Moq;
 using Optimizely.CarbonTracker.Analysis;
-using Optimizely.CarbonTracker.Calculation;
 using Optimizely.CarbonTracker.Models;
-using Xunit;
+using Optimizely.CarbonTracker.Services;
+
 
 namespace Optimizely.CarbonTracker.Tests.Analysis;
 
@@ -13,7 +13,7 @@ public class ImageAnalyzerTests
     public void Analyze_NoImages_ReturnsEmptyList()
     {
         // Arrange
-        var mockCalculator = new Mock<ICarbonCalculator>();
+        var mockCalculator = new Mock<ICarbonCalculatorService>();
         var analyzer = new ImageAnalyzer(mockCalculator.Object);
         var resources = new List<DiscoveredResource>();
         var htmlDoc = new HtmlDocument();
@@ -29,7 +29,7 @@ public class ImageAnalyzerTests
     public void Analyze_ImagesWithoutLazyLoading_SuggestsLazyLoading()
     {
         // Arrange
-        var mockCalculator = new Mock<ICarbonCalculator>();
+        var mockCalculator = new Mock<ICarbonCalculatorService>();
         mockCalculator.Setup(c => c.CalculateCO2Grams(It.IsAny<double>(), false))
             .Returns((double bytes, bool returning) => bytes * 0.0000004);
         
@@ -66,7 +66,7 @@ public class ImageAnalyzerTests
     public void Analyze_ImagesWithoutSrcset_SuggestsResponsiveImages()
     {
         // Arrange
-        var mockCalculator = new Mock<ICarbonCalculator>();
+        var mockCalculator = new Mock<ICarbonCalculatorService>();
         mockCalculator.Setup(c => c.CalculateCO2Grams(It.IsAny<double>(), false))
             .Returns((double bytes, bool returning) => bytes * 0.0000004);
         
@@ -96,7 +96,7 @@ public class ImageAnalyzerTests
     public void Analyze_LegacyFormats_SuggestsModernFormats()
     {
         // Arrange
-        var mockCalculator = new Mock<ICarbonCalculator>();
+        var mockCalculator = new Mock<ICarbonCalculatorService>();
         mockCalculator.Setup(c => c.CalculateCO2Grams(It.IsAny<double>(), false))
             .Returns((double bytes, bool returning) => bytes * 0.0000004);
         
@@ -134,7 +134,7 @@ public class ImageAnalyzerTests
     public void Analyze_LargeImages_SuggestsOptimization()
     {
         // Arrange
-        var mockCalculator = new Mock<ICarbonCalculator>();
+        var mockCalculator = new Mock<ICarbonCalculatorService>();
         mockCalculator.Setup(c => c.CalculateCO2Grams(It.IsAny<double>(), false))
             .Returns((double bytes, bool returning) => bytes * 0.0000004);
         

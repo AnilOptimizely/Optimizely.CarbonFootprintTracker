@@ -1,58 +1,35 @@
-using Microsoft.Extensions.Logging;
+using EPiServer;
+using EPiServer.Core;
+using EPiServer.Core.Internal;
+using EPiServer.Framework;
+using EPiServer.Framework.Initialization;
+using EPiServer.ServiceLocation;
+using EPiServer.Shell;
+using EPiServer.Shell.Web.Mvc.Html;
+using Microsoft.AspNetCore.Hosting.Server;
+using Optimizely.CarbonTracker.Models;
+using System.Threading;
 
-namespace Optimizely.CarbonTracker.Initialization;
-
-/// <summary>
-/// Module initializer for the Carbon Tracker add-on.
-///
-/// In an Optimizely CMS environment, this would implement IConfigurableModule
-/// to wire up services and event handlers during CMS startup.
-///
-/// Usage in Optimizely CMS:
-/// <code>
-/// [InitializableModule]
-/// [ModuleDependency(typeof(EPiServer.Web.InitializationModule))]
-/// public class CarbonTrackerInitializationModule : IConfigurableModule
-/// {
-///     public void ConfigureContainer(ServiceConfigurationContext context)
-///     {
-///         context.Services.AddCarbonTracker();
-///     }
-///
-///     public void Initialize(InitializationEngine context)
-///     {
-///         var events = context.Locate.Advanced.GetInstance&lt;IContentEvents&gt;();
-///         var handler = context.Locate.Advanced.GetInstance&lt;IContentEventHandler&gt;();
-///         events.PublishedContent += (sender, args) =&gt; { /* trigger analysis */ };
-///     }
-///
-///     public void Uninitialize(InitializationEngine context) { }
-/// }
-/// </code>
-/// </summary>
-public class CarbonTrackerInitializationModule
+namespace Optimizely.CarbonTracker.Initialization; 
+    /// <summary>
+    /// Initialization module for the Reading Time add-on.
+    /// </summary>
+    [InitializableModule]
+    [ModuleDependency(typeof(EPiServer.Web.InitializationModule))]
+    [ModuleDependency(typeof(ShellInitialization))]
+public class CarbonTrackerInitializationModule : IConfigurableModule
 {
-    private readonly IContentEventHandler _eventHandler;
-    private readonly ILogger<CarbonTrackerInitializationModule> _logger;
-
-    public CarbonTrackerInitializationModule(
-        IContentEventHandler eventHandler,
-        ILogger<CarbonTrackerInitializationModule> logger)
+    
+    public void ConfigureContainer(ServiceConfigurationContext context)
     {
-        _eventHandler = eventHandler;
-        _logger = logger;
     }
 
-    /// <summary>
-    /// Initialize the module and register event handlers
-    /// </summary>
-    public void Initialize()
+    public void Initialize(InitializationEngine context)
     {
-        _logger.LogInformation("Carbon Tracker module initialized");
     }
 
-    /// <summary>
-    /// Get the content event handler for external wiring
-    /// </summary>
-    public IContentEventHandler EventHandler => _eventHandler;
+    public void Uninitialize(InitializationEngine context)
+    {
+        // Cleanup logic
+    }
 }

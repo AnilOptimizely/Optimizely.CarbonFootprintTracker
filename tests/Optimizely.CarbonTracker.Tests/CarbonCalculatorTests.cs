@@ -1,7 +1,7 @@
 using Microsoft.Extensions.Options;
-using Optimizely.CarbonTracker.Calculation;
 using Optimizely.CarbonTracker.Configuration;
 using Optimizely.CarbonTracker.Models;
+using Optimizely.CarbonTracker.Services;
 using Xunit;
 
 namespace Optimizely.CarbonTracker.Tests.Calculation;
@@ -140,9 +140,9 @@ public class CarbonCalculatorTests
         Assert.Equal(mainResult, categoryResult);
     }
     
-    private CarbonCalculator CreateCalculator(CarbonTrackerOptions? options = null)
+    private CarbonCalculatorService CreateCalculator(CarbonTrackerOptions? options = null)
     {
         var opts = Options.Create(options ?? _defaultOptions);
-        return new CarbonCalculator(opts);
+        return new CarbonCalculatorService(opts);
     }
 }

@@ -1,10 +1,10 @@
+using EPiServer.Shell.Modules;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Optimizely.CarbonTracker.Analysis;
-using Optimizely.CarbonTracker.Calculation;
 using Optimizely.CarbonTracker.Configuration;
 using Optimizely.CarbonTracker.Initialization;
-using Optimizely.CarbonTracker.Persistence;
+using Optimizely.CarbonTracker.Services;
 
 namespace Optimizely.CarbonTracker;
 
@@ -29,27 +29,26 @@ public static class ServiceCollectionExtensions
         {
             services.Configure<CarbonTrackerOptions>(options => { });
         }
-
+        services.Configure<ProtectedModuleOptions>(o => o.Items.Add(new ModuleDetails { Name = "Optimizely.CarbonFootprintTracker" }));
         // Register HttpClient for page analysis
-        services.AddHttpClient<IPageAnalyzer, PageAnalyzer>()
+        services.AddHttpClient<IPageAnalysisService, PageAnalysisService>()
             .ConfigureHttpClient(client =>
             {
                 client.DefaultRequestHeaders.Add("User-Agent", "Optimizely-CarbonTracker/1.0");
             });
 
         // Register core services
-        services.TryAddScoped<ICarbonCalculator, CarbonCalculator>();
+        services.TryAddScoped<ICarbonCalculatorService, CarbonCalculatorService>();
         services.TryAddScoped<IImageAnalyzer, ImageAnalyzer>();
         services.TryAddScoped<IScriptAnalyzer, ScriptAnalyzer>();
         services.TryAddScoped<IVideoAnalyzer, VideoAnalyzer>();
         services.TryAddScoped<ICarbonReportService, CarbonReportService>();
 
         // Register persistence
-        services.TryAddSingleton<ICarbonReportRepository, CarbonReportRepository>();
+        services.TryAddSingleton<ICarbonReportRepository, CarbonReportRepositoryService>();
 
         // Register CMS hooks
         services.TryAddScoped<IContentEventHandler, ContentEventHandler>();
-        services.TryAddSingleton<CarbonAnalysisScheduledJob>();
         services.TryAddSingleton<CarbonTrackerInitializationModule>();
 
         return services;

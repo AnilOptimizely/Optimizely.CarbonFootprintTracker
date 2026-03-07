@@ -1,22 +1,21 @@
 using Moq;
-using Optimizely.CarbonTracker.Calculation;
 using Optimizely.CarbonTracker.Models;
-using Optimizely.CarbonTracker.Persistence;
+using Optimizely.CarbonTracker.Services;
 using Xunit;
 
 namespace Optimizely.CarbonTracker.Tests.Persistence;
 
 public class CarbonReportRepositoryTests
 {
-    private readonly Mock<ICarbonCalculator> _mockCalculator;
-    private readonly CarbonReportRepository _repository;
+    private readonly Mock<ICarbonCalculatorService> _mockCalculator;
+    private readonly CarbonReportRepositoryService _repository;
 
     public CarbonReportRepositoryTests()
     {
-        _mockCalculator = new Mock<ICarbonCalculator>();
+        _mockCalculator = new Mock<ICarbonCalculatorService>();
         _mockCalculator.Setup(c => c.CalculateGreenScore(It.IsAny<double>()))
             .Returns(GreenScore.C);
-        _repository = new CarbonReportRepository(_mockCalculator.Object);
+        _repository = new CarbonReportRepositoryService(_mockCalculator.Object);
     }
 
     [Fact]

@@ -1,13 +1,17 @@
+using EPiServer.Shell.ViewComposition;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Optimizely.CarbonTracker.Controllers;
 
-/// <summary>
-/// Controller for serving the Carbon Tracker IFrame UI.
-/// This is loaded inside an iframe in the Optimizely CMS Edit Mode panel.
-/// In production, protect with [Authorize(Policy = "episerver:cmseditor")].
-/// </summary>
-[Route("[controller]")]
+[IFrameComponent(
+      Url = "/CarbonTracker/Index",
+      Title = "Carbon Tracker",
+      Description = "Shows estimated carbon footprint for the current content",
+      Categories = "content",
+      PlugInAreas = "/episerver/cms/assets",
+      MinHeight = 200,
+      MaxHeight = 400,
+      ReloadOnContextChange = true)]
 public class CarbonTrackerViewController : Controller
 {
     /// <summary>
@@ -17,7 +21,7 @@ public class CarbonTrackerViewController : Controller
     /// <param name="contentLink">Content link/ID from CMS (e.g., "123_456")</param>
     /// <param name="pageUrl">Optional page URL to analyze</param>
     [HttpGet]
-    [Route("Index")]
+    [Route("CarbonTracker/Index")]
     public IActionResult Index(string? contentLink = null, string? pageUrl = null)
     {
         ViewBag.ContentLink = contentLink;

@@ -1,6 +1,6 @@
 using HtmlAgilityPack;
-using Optimizely.CarbonTracker.Calculation;
 using Optimizely.CarbonTracker.Models;
+using Optimizely.CarbonTracker.Services;
 
 namespace Optimizely.CarbonTracker.Analysis;
 
@@ -9,13 +9,13 @@ namespace Optimizely.CarbonTracker.Analysis;
 /// </summary>
 public class ImageAnalyzer : IImageAnalyzer
 {
-    private readonly ICarbonCalculator _carbonCalculator;
+    private readonly ICarbonCalculatorService _carbonCalculator;
     
     // Modern formats that should be preferred
     private static readonly string[] ModernFormats = { "webp", "avif" };
     private static readonly string[] LegacyFormats = { "jpeg", "jpg", "png", "gif" };
     
-    public ImageAnalyzer(ICarbonCalculator carbonCalculator)
+    public ImageAnalyzer(ICarbonCalculatorService carbonCalculator)
     {
         _carbonCalculator = carbonCalculator;
     }

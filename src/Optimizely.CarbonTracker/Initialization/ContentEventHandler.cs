@@ -2,7 +2,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Optimizely.CarbonTracker.Configuration;
 using Optimizely.CarbonTracker.Models;
-using Optimizely.CarbonTracker.Persistence;
+using Optimizely.CarbonTracker.Services;
 
 namespace Optimizely.CarbonTracker.Initialization;
 

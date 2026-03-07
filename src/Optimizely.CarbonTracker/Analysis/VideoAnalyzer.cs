@@ -1,27 +1,22 @@
 using HtmlAgilityPack;
-using Optimizely.CarbonTracker.Calculation;
 using Optimizely.CarbonTracker.Models;
+using Optimizely.CarbonTracker.Services;
 
 namespace Optimizely.CarbonTracker.Analysis;
 
 /// <summary>
 /// Analyzes video resources for optimization opportunities
 /// </summary>
-public class VideoAnalyzer : IVideoAnalyzer
+public class VideoAnalyzer(ICarbonCalculatorService carbonCalculator) : IVideoAnalyzer
 {
-    private readonly ICarbonCalculator _carbonCalculator;
-    
-    public VideoAnalyzer(ICarbonCalculator carbonCalculator)
-    {
-        _carbonCalculator = carbonCalculator;
-    }
-    
+    private readonly ICarbonCalculatorService _carbonCalculator = carbonCalculator;
+
     public List<OptimizationSuggestion> Analyze(List<DiscoveredResource> resources, HtmlDocument htmlDoc)
     {
         var suggestions = new List<OptimizationSuggestion>();
         var videos = resources.Where(r => r.Category == AssetCategory.Video).ToList();
         
-        if (!videos.Any()) return suggestions;
+        if (videos.Count == 0) return suggestions;
         
         // Check for autoplay videos
         var autoplayVideos = videos.Where(v => 

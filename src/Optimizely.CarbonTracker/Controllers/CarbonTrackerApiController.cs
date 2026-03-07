@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Optimizely.CarbonTracker.Models;
-using Optimizely.CarbonTracker.Persistence;
+using Optimizely.CarbonTracker.Services;
 
 namespace Optimizely.CarbonTracker.Controllers;
 

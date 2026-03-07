@@ -3,7 +3,7 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using Optimizely.CarbonTracker.Controllers;
 using Optimizely.CarbonTracker.Models;
-using Optimizely.CarbonTracker.Persistence;
+using Optimizely.CarbonTracker.Services;
 using Xunit;
 
 namespace Optimizely.CarbonTracker.Tests.Controllers;
