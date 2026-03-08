@@ -15,6 +15,7 @@
 		<AddRazorSupportForMvc>true</AddRazorSupportForMvc>
 		<Version>0.0.0.3</Version>
 		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+		<StaticWebAssetsEnabled>true</StaticWebAssetsEnabled>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -37,12 +38,7 @@
 		<PackageReference Include="EPiServer.CMS.UI.Core" Version="12.34.2" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.0" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.0" />
-		<PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.2.5" />
-		<PackageReference Include="Microsoft.AspNetCore.Mvc.ViewFeatures" Version="2.2.0" />
 		<PackageReference Include="HtmlAgilityPack" Version="1.11.46" />
 	</ItemGroup>
 	
-	<ItemGroup>
-		<EmbeddedResource Include="wwwroot/**/*" Condition="Exists('wwwroot')" />
-	</ItemGroup>
 </Project>
