@@ -26,7 +26,17 @@ dotnet add package Optimizely.CarbonTracker
 
 ### Configuration
 
-Add to your `Program.cs` or `Startup.cs`:
+Add a connection string to your `appsettings.json`:
+
+```json
+{
+  "ConnectionStrings": {
+    "CarbonTrackerDb": "Server=(localdb)\\mssqllocaldb;Database=CarbonTracker;Trusted_Connection=True;"
+  }
+}
+```
+
+Then add to your `Program.cs` or `Startup.cs`:
 
 ```csharp
 // Minimal configuration
@@ -41,7 +51,8 @@ services.AddCarbonTracker(
     },
     configureDb: dbOptions =>
     {
-        dbOptions.UseSqlServer(connectionString);
+        dbOptions.UseSqlServer(
+            builder.Configuration.GetConnectionString("CarbonTrackerDb"));
     });
 ```
 

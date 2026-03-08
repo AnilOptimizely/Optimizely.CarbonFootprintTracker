@@ -95,7 +95,14 @@ app.MapGet("/", () => Results.Content(@"
     
     <div class=""card"">
         <h3>Setup Code</h3>
-        <pre>// Program.cs
+        <pre>// appsettings.json
+{
+  ""ConnectionStrings"": {
+    ""CarbonTrackerDb"": ""Server=(localdb)\\mssqllocaldb;...""
+  }
+}
+
+// Program.cs
 builder.Services.AddCarbonTracker(
     configure: options =>
     {
@@ -104,7 +111,8 @@ builder.Services.AddCarbonTracker(
     },
     configureDb: dbOptions =>
     {
-        dbOptions.UseSqlServer(connectionString);
+        dbOptions.UseSqlServer(
+            builder.Configuration.GetConnectionString(""CarbonTrackerDb""));
     });</pre>
     </div>
     
