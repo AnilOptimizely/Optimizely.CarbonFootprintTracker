@@ -1,7 +1,7 @@
 using HtmlAgilityPack;
 using Optimizely.CarbonTracker.Models;
 
-namespace Optimizely.CarbonTracker.Analysis;
+namespace Optimizely.CarbonTracker.Services;
 
 /// <summary>
 /// Interface for analyzing specific asset types

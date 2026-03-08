@@ -2,7 +2,6 @@ using EPiServer.Shell.Modules;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Optimizely.CarbonTracker.Analysis;
 using Optimizely.CarbonTracker.Configuration;
 using Optimizely.CarbonTracker.Data;
 using Optimizely.CarbonTracker.Initialization;
@@ -32,15 +31,12 @@ public static class ServiceCollectionExtensions
         {
             services.Configure<CarbonTrackerOptions>(options => { });
         }
-        services.Configure<ProtectedModuleOptions>(o => o.Items.Add(new ModuleDetails { Name = "Optimizely.CarbonFootprintTracker" }));
+        services.Configure<ProtectedModuleOptions>(o => o.Items.Add(new ModuleDetails { Name = "Optimizely.CarbonTracker" }));
 
         // Register EF Core DbContext
         services.AddDbContext<CarbonTrackerDbContext>(options =>
         {
-            if (configureDb != null)
-            {
-                configureDb(options);
-            }
+            configureDb?.Invoke(options);
         });
 
         // Register HttpClient for page analysis
@@ -56,12 +52,9 @@ public static class ServiceCollectionExtensions
         services.TryAddScoped<IScriptAnalyzer, ScriptAnalyzer>();
         services.TryAddScoped<IVideoAnalyzer, VideoAnalyzer>();
         services.TryAddScoped<ICarbonReportService, CarbonReportService>();
-
         // Register persistence (Scoped to match DbContext lifetime)
         services.TryAddScoped<ICarbonReportRepository, CarbonReportRepositoryService>();
-
         // Register CMS hooks
-        services.TryAddScoped<IContentEventHandler, ContentEventHandler>();
         services.TryAddSingleton<CarbonTrackerInitializationModule>();
 
         return services;

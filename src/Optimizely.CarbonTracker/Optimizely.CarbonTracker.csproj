@@ -1,33 +1,48 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
 
-  <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-    <OutputType>Library</OutputType>
-    <PackageId>Optimizely.CarbonTracker</PackageId>
-    <Version>1.0.0</Version>
-    <Authors>Optimizely</Authors>
-    <Description>Carbon footprint tracking add-on for Optimizely CMS 12+ that provides real-time Green Score analysis for content pages</Description>
-    <PackageTags>optimizely;cms;carbon;sustainability;green-web</PackageTags>
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <RepositoryUrl>https://github.com/AnilOptimizely/Optimizely.CarbonFootprintTracker</RepositoryUrl>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<PackageId>Optimizely.CarbonTracker</PackageId>
+		<Authors>Optimizely</Authors>
+		<IsPackable>true</IsPackable>
+		<Description>Carbon footprint tracking add-on for Optimizely CMS 12+ that provides real-time Green Score analysis for content pages</Description>
+		<PackageTags>optimizely;cms;carbon;sustainability;green-web</PackageTags>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<RepositoryUrl>https://github.com/AnilOptimizely/Optimizely.CarbonFootprintTracker</RepositoryUrl>
+		<AssemblyVersion>0.0.0.3</AssemblyVersion>
+		<AddRazorSupportForMvc>true</AddRazorSupportForMvc>
+		<Version>0.0.0.3</Version>
+		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="EPiServer.CMS" Version="12.34.2" />
-    <PackageReference Include="EPiServer.CMS.UI.Core" Version="12.34.2" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.0" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.2.5" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.ViewFeatures" Version="2.2.0" />
-    <PackageReference Include="HtmlAgilityPack" Version="1.11.46" />
-  </ItemGroup>
+	<ItemGroup>
+		<None Include="module.config">
+			<Pack>true</Pack>
+			<PackagePath>contentFiles\module.config</PackagePath>
+		</None>
+		<None Include="build\Optimizely.CarbonTracker.targets">
+			<Pack>true</Pack>
+			<PackagePath>build\$(MSBuildProjectName).targets</PackagePath>
+		</None>
+	</ItemGroup>
 
-  <ItemGroup>
-    <EmbeddedResource Include="Views/**/*.cshtml" Condition="Exists('Views')" />
-    <EmbeddedResource Include="wwwroot/**/*" Condition="Exists('wwwroot')" />
-    <EmbeddedResource Include="module.config" Condition="Exists('module.config')" />
-  </ItemGroup>
+	<ItemGroup>
+		<FrameworkReference Include="Microsoft.AspNetCore.App" />
+	</ItemGroup>
 
+	<ItemGroup>
+		<PackageReference Include="EPiServer.CMS" Version="12.34.2" />
+		<PackageReference Include="EPiServer.CMS.UI.Core" Version="12.34.2" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.0" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.0" />
+		<PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.2.5" />
+		<PackageReference Include="Microsoft.AspNetCore.Mvc.ViewFeatures" Version="2.2.0" />
+		<PackageReference Include="HtmlAgilityPack" Version="1.11.46" />
+	</ItemGroup>
+	
+	<ItemGroup>
+		<EmbeddedResource Include="wwwroot/**/*" Condition="Exists('wwwroot')" />
+	</ItemGroup>
 </Project>

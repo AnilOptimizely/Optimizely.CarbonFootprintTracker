@@ -1,8 +1,7 @@
 using HtmlAgilityPack;
 using Optimizely.CarbonTracker.Models;
-using Optimizely.CarbonTracker.Services;
 
-namespace Optimizely.CarbonTracker.Analysis;
+namespace Optimizely.CarbonTracker.Services;
 
 /// <summary>
 /// Analyzes JavaScript resources for optimization opportunities

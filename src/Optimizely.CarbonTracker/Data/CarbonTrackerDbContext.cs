@@ -6,13 +6,8 @@ namespace Optimizely.CarbonTracker.Data;
 /// <summary>
 /// EF Core DbContext for persisting carbon footprint reports
 /// </summary>
-public class CarbonTrackerDbContext : DbContext
+public class CarbonTrackerDbContext(DbContextOptions<CarbonTrackerDbContext> options) : DbContext(options)
 {
-    public CarbonTrackerDbContext(DbContextOptions<CarbonTrackerDbContext> options)
-        : base(options)
-    {
-    }
-
     public DbSet<PageCarbonReport> PageCarbonReports => Set<PageCarbonReport>();
     public DbSet<AssetBreakdown> AssetBreakdowns => Set<AssetBreakdown>();
     public DbSet<OptimizationSuggestion> OptimizationSuggestions => Set<OptimizationSuggestion>();

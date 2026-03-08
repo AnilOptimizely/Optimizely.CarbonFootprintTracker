@@ -1,6 +1,5 @@
 using HtmlAgilityPack;
 using Moq;
-using Optimizely.CarbonTracker.Analysis;
 using Optimizely.CarbonTracker.Models;
 using Optimizely.CarbonTracker.Services;
 

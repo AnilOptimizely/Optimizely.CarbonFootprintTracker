@@ -43,10 +43,10 @@ public class PageCarbonReport
     /// <summary>
     /// Breakdown by asset category
     /// </summary>
-    public List<AssetBreakdown> Assets { get; set; } = new();
+    public List<AssetBreakdown> Assets { get; set; } = [];
     
     /// <summary>
     /// Optimization suggestions
     /// </summary>
-    public List<OptimizationSuggestion> Suggestions { get; set; } = new();
+    public List<OptimizationSuggestion> Suggestions { get; set; } = [];
 }

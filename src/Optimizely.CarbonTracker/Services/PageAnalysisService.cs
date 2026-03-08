@@ -1,7 +1,6 @@
 using HtmlAgilityPack;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Optimizely.CarbonTracker.Analysis;
 using Optimizely.CarbonTracker.Configuration;
 using Optimizely.CarbonTracker.Models;
 using System.Text.RegularExpressions;
