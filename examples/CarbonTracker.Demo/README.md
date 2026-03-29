@@ -35,6 +35,18 @@ Visit any of these endpoints:
 
 ## Code Example
 
+Add a connection string to your `appsettings.json`:
+
+```json
+{
+  "ConnectionStrings": {
+    "CarbonTrackerDb": "Server=(localdb)\\mssqllocaldb;Database=CarbonTracker;Trusted_Connection=True;"
+  }
+}
+```
+
+Then configure the Carbon Tracker in `Program.cs`:
+
 ```csharp
 // In Program.cs
 builder.Services.AddCarbonTracker(
@@ -45,7 +57,8 @@ builder.Services.AddCarbonTracker(
     },
     configureDb: dbOptions =>
     {
-        dbOptions.UseSqlServer(connectionString);
+        dbOptions.UseSqlServer(
+            builder.Configuration.GetConnectionString("CarbonTrackerDb"));
     });
 ```
 
